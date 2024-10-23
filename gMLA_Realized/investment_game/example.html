@@ -1,0 +1,21 @@
+{% extends "global/Page.html" %}
+{% block title %}  {% endblock %}
+
+{% block content %}
+<h4>Example</h4>
+
+
+    <li>Suppose you invested 50 cents, and your success number was 4. </li>
+
+<li>If your die roll is 4: your investment is successful. You can earn $3.00 (0.5*6) from your investment PLUS the 50 cents you did not invest (1-0.5), for a total bonus payment of $3.00 + $0.50 = $3.50.</li>
+
+<li>If your die roll is any number other than 4: your investment is unsuccessful. You earn $0.00 from your investment PLUS the $0.50 ($1.00 - $0.50) you did not invest, for a total bonus payment of $0.00 + $0.50 = $0.50.</li>
+
+<li> Note that investment amounts are restricted to 25-cent increments.</li>
+
+<li> Raise your hand if you have any questions and we will answer them privately at your computer.</li>
+
+Click “Next” when you are ready to start.
+
+{% next_button %}
+{% endblock %}

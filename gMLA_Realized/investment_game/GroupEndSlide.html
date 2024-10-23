@@ -1,0 +1,81 @@
+{% extends "global/Page.html" %}
+{% load otree static %}
+
+{% block title %}
+Final Earnings
+{% endblock %}
+
+{% block content %}
+
+<div class="card bg-light m-3">
+    <div class="card-body">
+        <p>You have completed all group investment rounds.</p>
+        <p>Your group's final earnings for the fourth round are:
+            <span style="color: {% if fourth_round_earnings >= 0 %}green{% else %}red{% endif %}; font-weight: bold;">
+                ${{ fourth_round_earnings }}
+            </span>
+        </p>
+        <p>Your individual earnings are:
+            <span style="color: blue; font-weight: bold;">
+                ${{ individual_earnings }}
+            </span>
+        </p>
+
+
+
+    </div>
+</div>
+
+
+        <hr style="border-top: 1px solid #ccc; margin: 20px 0;">
+
+<h5>Raise your hand to exchange your investment amount. If your investment amount is negative, you have to pay the cashier. If it's positive, you will be paid.</h5>
+
+<div id="experimenter-input">
+    <input type="text" name="close_field" id="id_close_field">
+</div>
+
+<div id="next-button-container" style="display: none;">
+    {% next_button %}
+</div>
+
+
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    function formatCurrency(amount) {
+        return parseFloat(amount).toFixed(2);
+    }
+
+    var fourthRoundEarningsElement = document.querySelector('span[style*="color:"]');
+    var fourthRoundEarnings = fourthRoundEarningsElement.textContent.trim();
+    if (fourthRoundEarnings !== '$NaN') {
+        fourthRoundEarningsElement.textContent = '$' + formatCurrency(fourthRoundEarnings.replace('$', ''));
+    } else {
+        fourthRoundEarningsElement.textContent = '$0.00';
+    }
+
+    var individualEarningsElement = document.querySelector('span[style*="color: blue"]');
+    var individualEarnings = individualEarningsElement.textContent.trim();
+    if (individualEarnings !== '$NaN') {
+        individualEarningsElement.textContent = '$' + formatCurrency(individualEarnings.replace('$', ''));
+    } else {
+        individualEarningsElement.textContent = '$0.00';
+    }
+           var closeField = document.getElementById('id_close_field');
+        var nextButtonContainer = document.getElementById('next-button-container');
+
+
+        closeField.addEventListener('input', function() {
+    if (this.value === '1') {
+        nextButtonContainer.style.display = 'block';
+    } else {
+        nextButtonContainer.style.display = 'none';
+    }
+});
+});
+</script>
+{% endblock %}

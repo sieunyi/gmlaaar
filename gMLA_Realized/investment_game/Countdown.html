@@ -1,0 +1,35 @@
+{% extends "global/Page.html" %}
+{% load otree static %}
+{% block content %}
+
+    <script>
+        var timeLeft = 180;
+        var countdownElement = document.getElementById("countdown");
+
+        function updateCountdown() {
+            if (timeLeft <= 0) {
+                return;
+            }
+            timeLeft -= 1;
+            countdownElement.textContent = timeLeft;
+
+            if (timeLeft > 0) {
+                setTimeout(updateCountdown, 1000);
+            }
+        }
+
+        setTimeout(updateCountdown, 1000);
+    </script>
+
+    <h2> Important:</h2>
+<ul>
+   <li>Please put all the money that has been used up and won in the previous part back into the envelope.</li>
+   <li>Please raise your hand once you reach this page.</li>
+   <li>You will receive a new budget for the following rounds.</li>
+     <li>When you receive a new budget, count the amount carefully.</li>
+   <li> Use only this new budget for the upcoming rounds.</li>
+
+</ul>
+
+
+{% endblock %}

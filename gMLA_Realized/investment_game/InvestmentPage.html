@@ -1,0 +1,92 @@
+{% extends "global/Page.html" %}
+{% load otree static %}
+
+{% block title %}
+    Round {{ player.round_number }} of {{ 12 }}
+{% endblock %}
+
+{% block content %}
+<style>
+    .invest-button {
+        padding: 3px 6px;
+        font-size: 16px;
+        cursor: pointer;
+        background-color: #f0f0f0;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+
+    .invest-button:hover {
+        background-color: #e0e0e0;
+    }
+
+    .invest-button.selected {
+        background-color: #4CAF50;
+        color: white;
+    }
+
+    #next-button-container {
+        display: none;
+        margin-top: 20px;
+    }
+</style>
+
+<hr style="border-top: 1px solid #ccc; margin: 20px 0;">
+
+<h6>Your success number for this round is: <span style="color: blue; font-weight: bold;">{{ player.success_number }}</span></h6>
+<h6>You have $1 to invest in this round.</h6>
+<hr style="border-top: 1px solid #ccc; margin: 20px 0;">
+
+
+
+<h6>Please choose your investment amount:</h6>
+<h4>I would like to invest:</h6>
+ <div id="investment-buttons" style="width: 100%; margin: 20px 0; display: flex; justify-content: space-between;">
+
+    <button type="button" class="invest-button" onclick="setInvestment(0)">$0.00</button>
+    <button type="button" class="invest-button" onclick="setInvestment(0.25)">$0.25</button>
+    <button type="button" class="invest-button" onclick="setInvestment(0.5)">$0.50</button>
+    <button type="button" class="invest-button" onclick="setInvestment(0.75)">$0.75</button>
+    <button type="button" class="invest-button" onclick="setInvestment(1)">$1.00</button>
+</div>
+
+
+
+        </div>
+<p>Investment amount: $<span id="investment-value">0.00</span></p>
+
+<input type="hidden" name="investment" id="id_investment" value="0">
+
+
+{{ formfield_errors 'investment' }}
+
+<div id="next-button-container">
+    {% next_button %}
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        function setInvestment(value) {
+            value = parseFloat(value).toFixed(2);
+            document.getElementById('investment-value').innerHTML = value;
+            document.getElementById('id_investment').value = value;
+
+            // Update button styles
+            var buttons = document.getElementsByClassName('invest-button');
+            for (var i = 0; i < buttons.length; i++) {
+                buttons[i].classList.remove('selected');
+            }
+            event.target.classList.add('selected');
+
+            // Show the next button
+            document.getElementById('next-button-container').style.display = 'block';
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Hide the next button initially
+            document.getElementById('next-button-container').style.display = 'none';
+        });
+    </script>
+{% endblock %}

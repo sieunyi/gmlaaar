@@ -1,0 +1,50 @@
+{% extends "global/Page.html" %}
+{% load otree static %}
+
+{% block title %}{% endblock %}
+
+{% block content %}
+ <h6>You have completed this part of the investment.</h6>
+
+    <h6>The final earnings for the last individual round are: <strong id="fourth_round_earnings">{{ fourth_round_earnings }}</strong></h6>
+    <hr style="border-top: 1px solid #ccc; margin: 20px 0;">
+    <h6>Please raise your hand in order to transfer your final investment earnings.</h6>
+    <h6>If your investment amount is negative, you have to pay the cashier. If it's positive, you will be paid.</h6>
+
+    <form id="form">
+        {% formfield 'close_field' label="" %}
+        <div id="next-button-container" style="display: none;">
+            <button class="otree-btn-next btn btn-primary" type="submit">Next</button>
+        </div>
+    </form>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var earningsElement = document.getElementById('fourth_round_earnings');
+        var earningsValue = earningsElement.textContent.trim();
+        earningsValue = earningsValue.replace(/\s*(puntos|points)\s*$/i, '');
+        earningsValue = earningsValue.replace('$', '');
+        var formattedValue = parseFloat(earningsValue).toFixed(2);
+        earningsElement.textContent = '$' + formattedValue;
+
+        var form = document.getElementById('form');
+        var closeField = document.getElementById('id_close_field');
+        var nextButtonContainer = document.getElementById('next-button-container');
+
+        closeField.addEventListener('input', function() {
+            if (this.value === '1') {
+                nextButtonContainer.style.display = 'block';
+            } else {
+                nextButtonContainer.style.display = 'none';
+            }
+        });
+
+        form.addEventListener('submit', function(event) {
+            if (closeField.value !== '1') {
+                event.preventDefault();
+                alert('Please enter "1" to proceed.');
+            }
+        });
+    });
+    </script>
+{% endblock %}

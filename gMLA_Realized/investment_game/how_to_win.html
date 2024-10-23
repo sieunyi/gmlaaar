@@ -1,0 +1,22 @@
+{% extends "global/Page.html" %}
+{% block title %}Part 1{% endblock %}
+
+{% block content %}
+<h4>Compensation </h4>
+<ul>
+    <li> Each part of the study consists of 4 rounds of investment choices. </li>
+ <li> For each choice, you can invest up to $1 in increments of $0.25.</li>
+    <li>Money that is not invested is yours to keep.</li>
+    <li>You will be randomly assigned a "success number" between 1 and 6.</li>
+    <li>You will roll a virtual six-sided die.</li>
+    <li>If the result of the die matches your "success number", the investment is successful. If your investment is successful, you get six times the amount of your investment, else you get nothing.</li>
+    <li> Any amount you do not invest will be added to your earnings. </li>
+
+<li> You have a 1-in-6 chance of a successful investment and a 5-in-6 chance of an unsuccessful investment.</li>
+ <li>In each round, you will be assigned to a new "success number" and this process is repeated for every round.</li>
+
+</ul>
+
+
+{% next_button %}
+{% endblock %}

@@ -1,0 +1,156 @@
+{% extends "global/Page.html" %}
+{% load otree static %}
+
+{% block title %}
+    Round {{ player.round_number }} of {{ 12 }}
+{% endblock %}
+
+{% block content %}
+<style>
+    .invest-button {
+        padding: 3px 6px;
+        font-size: 16px;
+        cursor: pointer;
+        background-color: #f0f0f0;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+
+    .invest-button:hover {
+        background-color: #e0e0e0;
+    }
+
+    .invest-button.selected {
+        background-color: #4CAF50;
+        color: white;
+    }
+
+    #next-button-container {
+        display: none;
+        margin-top: 20px;
+    }
+</style>
+
+
+    <p>Your group's success number for this round is: <span style="color: blue; font-weight: bold;">{{ success_number }}</span></p>
+    <p>Your group has $ 2 to invest.</p>
+    <p>Use the chat box below to discuss your investment decision with your partner:</p>
+    {% chat %}
+
+    <hr style="border-top: 1px solid #ccc; margin: 20px 0;">
+
+    <div id="proposal-area" style="margin-bottom: 20px;">
+        <h2>Investment Proposal</h2>
+        <div id="investment-buttons" style="width: 100%; margin: 20px 0; display: flex; justify-content: space-between;">
+
+             <button class="invest-button" onclick="proposeInvestment(0)">$0.0</button>
+             <button class="invest-button" onclick="proposeInvestment(0.5)">$0.5</button>
+            <button class="invest-button" onclick="proposeInvestment(1)">$1.0</button>
+            <button class="invest-button" onclick="proposeInvestment(1.5)">$1.5</button>
+            <button class="invest-button" onclick="proposeInvestment(2)">$2.0</button>
+
+
+
+        </div>
+        <button id="accept-button" onclick="acceptProposal()" style="display: none;">Accept</button>
+        <button id="reject-button" onclick="rejectProposal()" style="display: none;">Reject</button>
+    </div>
+
+    <p id="status-message" style="font-weight: bold; margin-bottom: 10px;"></p>
+
+    <p id="round-counter" style="font-style: italic;"> Attempts: 1 / 3 </p>
+
+    <input type="hidden" name="group_investment" id="group_investment_input" value="{{ group_investment }}">
+
+    <div id="nextButtonDiv" style="display: none; margin-top: 20px;">
+        {% next_button %}
+    </div>
+{% endblock %}
+
+{% block scripts %}
+
+
+<script>
+    let playerId = {{ player.id_in_group }};
+    let roundCount = 0;
+    let proposedAmount = null;
+    let agreedAmount = null;
+    let maxRounds = 3;
+    let canSubmit = false;
+
+    function proposeInvestment(amount) {
+        proposedAmount = amount;
+        liveSend({type: 'propose', amount: proposedAmount});
+        disableInvestmentButtons();
+        document.getElementById('status-message').textContent = 'Waiting for your partner to make a proposal...';
+
+        let buttons = document.getElementsByClassName('invest-button');
+        for (let button of buttons) {
+            button.classList.remove('selected');
+        }
+        event.target.classList.add('selected');
+    }
+
+    function prepareToSubmit() {
+        document.getElementById('group_investment_input').value = agreedAmount;
+        document.getElementById('nextButtonDiv').style.display = 'block';
+        disableInvestmentButtons();
+    }
+
+    function disableInvestmentButtons() {
+        let buttons = document.getElementsByClassName('invest-button');
+        for (let button of buttons) {
+            button.disabled = true;
+        }
+    }
+
+    function enableInvestmentButtons() {
+        let buttons = document.getElementsByClassName('invest-button');
+        for (let button of buttons) {
+            button.disabled = false;
+        }
+    }
+
+    function updateRoundCounter(round) {
+        roundCount = round;
+        document.getElementById('round-counter').textContent = `Attempt: ${roundCount} / ${maxRounds}`;
+    }
+
+    function liveRecv(data) {
+        console.log("Received data:", data);
+        if (data.type === 'round_result') {
+            updateRoundCounter(data.round);
+            if (data.match) {
+                agreedAmount = data.amount;
+                document.getElementById('status-message').textContent = `Agreement reached! Both players proposed $${agreedAmount}.`;
+                canSubmit = true;
+                prepareToSubmit();
+            } else {
+                if (roundCount <= maxRounds) {  // Changed from < to <=
+                    document.getElementById('status-message').textContent = 'No match. Please make another proposal.';
+                    enableInvestmentButtons();
+                } else {
+                    agreedAmount = data.amount;
+                    document.getElementById('status-message').textContent = `No agreement reached after ${maxRounds} attempts. A random investment of $${agreedAmount} will be used.`;
+                    canSubmit = true;
+                    prepareToSubmit();
+                }
+            }
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('status-message').textContent = 'Please make an investment proposal by selecting an amount above.';
+        updateRoundCounter(1);
+    });
+
+    document.querySelector('form').addEventListener('submit', function(event) {
+        if (!canSubmit) {
+            event.preventDefault();
+            alert('Please reach an agreement before proceeding.');
+        }
+    });
+</script>
+
+
+{% endblock %}

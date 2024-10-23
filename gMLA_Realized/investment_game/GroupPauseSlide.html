@@ -1,0 +1,109 @@
+{% extends "global/Page.html" %}
+{% load otree static %}
+{% load custom_filters %}
+
+{% block title %}{% endblock %}
+
+{% block content %}
+    <h6>Your group's total earnings for the three rounds are: <span style="color: blue; font-weight: bold;" id="totalGroupEarnings">${{ total_earnings }}</span></h6>
+
+    <hr style="border-top: 1px solid #ccc; margin: 20px 0;">
+    <h6>The individual earnings are: <span style="color: green; font-weight: bold;" id="individualEarnings"></span></h6>
+
+    <hr style="border-top: 1px solid #ccc; margin: 20px 0;">
+
+<h6>Raise your hand to exchange your investment amount. If your investment amount is negative, you have to pay the cashier. If it's positive, you will be paid.</h6>
+
+
+    <div id="experimenter-input">
+        <input type="text" id="experimenter-code" />
+    </div>
+
+    <div id="participant-input" style="display: none;">
+        <h6>Please type 'close' in the box below to determine your final investment earnings.</h6>
+        {% formfield 'close_field' label="" %}
+    </div>
+
+    <p id="timer-message" style="display: none;">You will be redirected to the next page in <span id="countdown">15</span> seconds</p>
+
+    <div id="next-button-container" style="display: none;">
+        {% next_button %}
+    </div>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            function formatAmount(element) {
+                var amountText = element.innerText;
+                var numericValue = amountText.replace(/[^\d.-]/g, '');
+                var formattedValue = parseFloat(numericValue).toFixed(2);
+                element.innerText = '$' + formattedValue;
+            }
+
+            var groupEarningsElement = document.getElementById('totalGroupEarnings');
+            formatAmount(groupEarningsElement);
+
+            var groupEarnings = parseFloat(groupEarningsElement.innerText.replace('$', ''));
+            var individualEarnings = groupEarnings / 2;
+
+            var individualEarningsElement = document.getElementById('individualEarnings');
+            individualEarningsElement.innerText = '$' + individualEarnings.toFixed(2);
+
+
+            var experimenterInput = document.getElementById('experimenter-code');
+            var participantInput = document.getElementById('participant-input');
+
+            var closeField = document.getElementById('id_close_field');
+            var timerMessage = document.getElementById('timer-message');
+            var countdownElement = document.getElementById('countdown');
+            var nextButtonContainer = document.getElementById('next-button-container');
+            var nextButton = document.getElementById('next-button');
+
+            closeField.addEventListener('input', function() {
+                if (this.value.toLowerCase() === 'close') {
+                    nextButtonContainer.style.display = 'block';
+                } else {
+                    nextButtonContainer.style.display = 'none';
+                }
+            });
+
+            experimenterInput.addEventListener('input', function() {
+                if (this.value === '1') {
+                    participantInput.style.display = 'block';
+                    this.disabled = true;
+                }
+            });
+
+
+
+
+            function startTimer() {
+                timerMessage.style.display = 'block';
+                var secondsLeft = 15;
+                var countdownTimer = setInterval(function() {
+                    secondsLeft--;
+                    countdownElement.textContent = secondsLeft;
+                    if (secondsLeft <= 0) {
+                        clearInterval(countdownTimer);
+                        document.querySelector('form').submit(); // Submit the form after 15 seconds
+                    }
+                }, 1000);
+            }
+
+            nextButton.addEventListener('click', function(event) {
+                event.preventDefault(); // Prevent immediate form submission
+                this.disabled = true; // Disable the button to prevent multiple clicks
+                startTimer(); // Start the timer when Next is clicked
+            });
+
+        closeField.addEventListener('input', function() {
+            if (this.value === '1') {
+                nextButtonContainer.style.display = 'block';
+            } else {
+                nextButtonContainer.style.display = 'none';
+            }
+        });
+        });
+
+    </script>
+{% endblock %}

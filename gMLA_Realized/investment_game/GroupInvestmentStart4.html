@@ -1,0 +1,21 @@
+{% extends "global/Page.html" %}
+{% load otree static %}
+
+{% block title %}Negotiation Process{% endblock %}
+
+{% block content %}
+    <ul>
+        <li> Both players simultaneously submit an investment proposal by selecting an amount.</li>
+ <li> If both players propose the same amount, that becomes the agreed investment.</li>
+ <li> If the two proposals differ, players will be able to discuss again using the communicating chat.</li>
+ <li> Players can then submit new proposals or accept their partner's proposal.</li>
+ <li> This process continues until an agreement is reached or 3 attempts have been made.</li>
+ <li> If no agreement is reached after <strong>3 attempts</strong>, a <strong>random investment amount</strong> will be used for that round.</li>
+ <li> Once an agreement is reached, you'll move to the next stage.</li>
+ <li> Use the chat feature to discuss your investment strategy with your partner throughout the process.</li>
+
+Click "Next" if you are ready to start.
+    </ul>
+
+    {% next_button %}
+{% endblock %}
